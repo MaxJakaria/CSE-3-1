@@ -7,9 +7,9 @@ import re
 # Token patterns (regular expressions)
 token_patterns = [
     ("NUMBER", r"\d+"),  # Numbers (e.g., 123)
-    ("ID", r"[A-Za-z_]\w*"),  # Identifiers (variables, function names)
-    ("OP", r"==|!=|<=|>=|[+\-*/=<>]"),  # Operators (single & double char)
-    ("SEMI", r";"),  # Semicolon
+    ("IDENTIFIER", r"[A-Za-z_]\w*"),  # Identifiers (variables, function names)
+    ("OPERATOR", r"==|!=|<=|>=|[+\-*/=<>]"),  # Operators (single & double char)
+    ("SEMICOLON", r";"),  # Semicolon
     ("LPAREN", r"\("),  # (
     ("RPAREN", r"\)"),  # )
     ("LBRACE", r"\{"),  # {
@@ -37,23 +37,12 @@ def lexer(source_code):
     tokens = []
     for match in re.finditer(master_pattern, source_code):
         kind = match.lastgroup  # Token type
+        if kind == "MISMATCH":
+            print('Error: ',kind)
+            break
         value = match.group()  # Actual string
 
-        if kind == "NUMBER":
-            tokens.append(("NUMBER", value))
-        elif kind == "ID":
-            if value in keywords:
-                tokens.append(("KEYWORD", value))
-            else:
-                tokens.append(("IDENTIFIER", value))
-        elif kind == "OP":
-            tokens.append(("OPERATOR", value))
-        elif kind == "SKIP":
-            continue
-        elif kind == "MISMATCH":
-            raise ValueError(f"Unexpected character: {value}")
-        else:
-            tokens.append((kind, value))
+        tokens.append((kind, value))
     return tokens
 
 
@@ -66,7 +55,7 @@ if __name__ == "__main__":
         int x = 10;
         if (x >= 5) {
             x = x + 1;
-        }
+        }#
         return x;
     }
     """
