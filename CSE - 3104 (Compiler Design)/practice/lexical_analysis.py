@@ -36,14 +36,19 @@ def lexer(source_code):
     """Convert source code into a list of tokens."""
     tokens = []
     for match in re.finditer(master_pattern, source_code):
-        kind = match.lastgroup  # Token type
+        kind = match.lastgroup
+        value = match.group()
+
+        if kind == "SKIP":
+            continue
         if kind == "MISMATCH":
-            print('Error: ',kind)
-            break
-        value = match.group()  # Actual string
+            raise RuntimeError(f"Unexpected character: {value!r}")
+        if kind == "IDENTIFIER" and value in keywords:
+            kind = "KEYWORD"
 
         tokens.append((kind, value))
     return tokens
+
 
 
 # -------------------------------
@@ -55,7 +60,7 @@ if __name__ == "__main__":
         int x = 10;
         if (x >= 5) {
             x = x + 1;
-        }#
+        }
         return x;
     }
     """

@@ -1,15 +1,14 @@
 # Simple Syntax Checker in Python
 # Checks for missing semicolons and very simple rules
 
-def syntax_checker(code_lines):
+def syntax_checker(code):
     errors = []
 
-    for i, line in enumerate(code_lines, start=1):
-        line = line.strip()
+    # Split the code into lines
+    lines = code.strip().split("\n")
 
-        # Skip empty lines
-        if not line:
-            continue
+    for i, line in enumerate(lines, start=1):
+        line = line.strip()
 
         # Skip single-line comments
         if line.startswith("//"):
@@ -19,31 +18,28 @@ def syntax_checker(code_lines):
         if line.startswith("/") or line.endswith("/"):
             continue
 
-        # If line starts with print (for simplicity, we allow no semicolon)
+        # Skip print statements
         if line.startswith("print"):
             continue
 
-        # Check if the line should end with semicolon
+        # Check if line should end with semicolon
         if not line.endswith(";"):
-            errors.append(f"Syntax Error: Missing semicolon at line {i}")
+            errors.append(f"Syntax Error: Missing semicolon at line {i}: '{line}'")
 
     return errors
 
 
 # ---------- Example Run ----------
 if __name__ == "__main__":
-    # Example input (like in your question)
-    code = [
-        "int a = 5;",
-        "int b = 10",
-        "int c = a + b",
-        'print("Value of c is: ", c);'
-    ]
+    code = """
+        int a = 5
+        int b = 10;
+        int c = a + b
+        print("Value of c is", c);
+    """
 
-    # Run checker
     errs = syntax_checker(code)
 
-    # Show output
     if errs:
         for e in errs:
             print(e)
